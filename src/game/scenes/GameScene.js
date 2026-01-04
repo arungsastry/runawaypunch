@@ -8,6 +8,7 @@ export class GameScene {
     this.gameOver = false;
     this.gameWon = false;
     this.monsterHealth = 5;
+    this.speedIncreased = false;
   }
 
   onEnter(engine) {
@@ -45,6 +46,11 @@ export class GameScene {
         this.monsterHealth--;
         this.score += 100;
 
+        if (this.score >= 300 && !this.speedIncreased) {
+          this.monster.increaseSpeed();
+          this.speedIncreased = true;
+        }
+
         if (this.monsterHealth <= 0) {
           this.gameWon = true;
         }
@@ -63,14 +69,46 @@ export class GameScene {
     }
   }
 
+  onResize(width, height) {
+    if (this.player && this.player.updateCanvasDimensions) {
+      this.player.updateCanvasDimensions(width, height);
+    }
+    if (this.monster && this.monster.updateCanvasDimensions) {
+      this.monster.updateCanvasDimensions(width, height);
+    }
+  }
+
   update(dt, engine) {
-    if (this.gameOver || this.gameWon) return;
+    if (this.gameOver || this.gameWon) {
+      if (this.gameOver && !this.gameStopped) {
+        engine.stop();
+        this.gameStopped = true;
+      }
+      return;
+    }
 
     if (this.monster.checkHit(this.player)) {
       this.gameOver = true;
     }
 
     this.canHitMonster = this.monster.state === 'dizzy';
+  }
+
+  restart(engine) {
+    this.onExit();
+
+    this.score = 0;
+    this.gameOver = false;
+    this.gameWon = false;
+    this.gameStopped = false;
+    this.monsterHealth = 5;
+    this.speedIncreased = false;
+
+    this.onEnter(engine);
+
+    if (!engine.running) {
+      engine.start();
+    }
   }
 
   render(ctx, engine) {
@@ -82,9 +120,15 @@ export class GameScene {
 
     ctx.fillStyle = '#FFFFFF';
     ctx.font = 'bold 24px Arial';
-    ctx.fillText(`Score: ${this.score}`, 20, 40);
+    ctx.fillText(`User: ${this.score}`, 20, 40);
     ctx.fillText(`Monster HP: ${this.monsterHealth}`, 20, 70);
     ctx.fillText(`Misses: ${this.monster.missCount}/3`, 20, 100);
+
+    if (this.speedIncreased) {
+      ctx.fillStyle = '#FF6B6B';
+      ctx.font = 'bold 20px Arial';
+      ctx.fillText('⚡ MONSTER SPEED UP! ⚡', 20, 130);
+    }
 
     if (this.monster.state === 'dizzy') {
       ctx.fillStyle = '#FCD34D';

@@ -37,7 +37,19 @@ export function GameControls(props) {
   };
 
   return (
-    <div class="game-controls">
+    <>
+      {props.gameOver && (
+        <button
+          class="retry-btn-overlay"
+          onClick={props.onRestart}
+        >
+          <div class="retry-btn-content">
+            <span class="retry-text">RETRY</span>
+            <span class="retry-hint">Start Fresh</span>
+          </div>
+        </button>
+      )}
+      <div class="game-controls">
       <button
         class={`control-btn arrow-btn ${leftPressed() ? 'pressed' : ''}`}
         onMouseDown={handleLeftDown}
@@ -56,7 +68,10 @@ export function GameControls(props) {
         onClick={handleHit}
         disabled={!props.canHit}
       >
-        HIT!
+        <div class="hit-btn-content">
+          <span class="hit-text">HIT!</span>
+          <span class="hit-hint">(SPACE)</span>
+        </div>
       </button>
 
       <button
@@ -72,5 +87,6 @@ export function GameControls(props) {
         </svg>
       </button>
     </div>
+    </>
   );
 }

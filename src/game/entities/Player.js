@@ -7,7 +7,7 @@ export class Player extends Entity {
   constructor(x, y, inputSystem, canvasWidth) {
     super();
     this.inputSystem = inputSystem;
-    this.speed = 300;
+    this.speed = 1500;
     this.canvasWidth = canvasWidth;
     this.width = 40;
     this.height = 60;
@@ -20,7 +20,7 @@ export class Player extends Entity {
     }));
     this.addComponent(createPhysicsComponent({
       friction: 0.2,
-      maxSpeed: 500
+      maxSpeed: 2000
     }));
     this.addComponent(createColliderComponent(20));
   }
@@ -29,7 +29,7 @@ export class Player extends Entity {
     const physics = this.components.physics;
     const transform = this.components.transform;
 
-    physics.accelerationX = 0;
+    physics.accelerationX = 1;
 
     if (this.inputSystem.isKeyPressed('KeyA') || this.inputSystem.isKeyPressed('ArrowLeft')) {
       physics.accelerationX = -this.speed;
@@ -47,6 +47,19 @@ export class Player extends Entity {
       transform.x = this.canvasWidth - padding;
       physics.velocityX = 0;
     }
+  }
+
+  updateCanvasDimensions(width, height) {
+    this.canvasWidth = width;
+
+    const transform = this.components.transform;
+    const padding = this.width / 2;
+
+    if (transform.x > width - padding) {
+      transform.x = width - padding;
+    }
+
+    transform.y = height - 80;
   }
 
   render(ctx) {
