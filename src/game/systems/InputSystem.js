@@ -1,5 +1,6 @@
 export class InputSystem {
   constructor() {
+    this.systemType = 'InputSystem';
     this.keys = new Map();
     this.mouse = {
       x: 0,

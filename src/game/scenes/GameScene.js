@@ -13,7 +13,7 @@ export class GameScene {
 
   onEnter(engine) {
     this.engine = engine;
-    const inputSystem = engine.systems.find(s => s.constructor.name === 'InputSystem');
+    const inputSystem = engine.systems.find(s => s.systemType === 'InputSystem');
 
     const playerY = engine.canvas.height - 80;
     const player = new Player(
